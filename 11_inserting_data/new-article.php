@@ -1,18 +1,29 @@
 <?php 
 if($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    require 'includes/database.php';
+
     $sql = "INSERT INTO article (title, content, published_at)
-            VALUES ('" . $_POST['title'] ."','"
-                        . $_POST['content'] ."','"
-                        . $_POST['published_at'] ."')";
+            VALUES (?,?,?)";
 
-    var_dump($sql); exit;;
-
-    $results = mysqli_query($conn, $sql);
+    //var_dump($sql); exit;;
+    $stmt = mysqli_prepare($conn, $sql);
+    //$results = mysqli_query($conn, $sql);
     //phpinfo();
-    if ($results === false) {
+    if ($stmt === false) {
         echo mysqli_error($conn);
     } else {
-        $article = mysqli_fetch_assoc($results);
+        //$article = mysqli_fetch_assoc($results);
+        mysqli_stmt_bind_param($stmt, "sss", $_POST['title'], $_POST['content'], $_POST['published_at']);
+        
+        if(mysqli_stmt_execute($stmt)) {
+            $id = mysqli_insert_id($conn);
+            echo "Inserted record with ID: $id";
+        } else {
+            echo mysqli_stmt_error($stmt);
+        }
+        
+        
     }
 }
 

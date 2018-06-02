@@ -14,3 +14,10 @@ ORDER BY column1 DESC;
 INSERT INTO table_name (column1, column2)
 VALUES (value2, value3),
        (value5, value6);
+
+escape:
+
+$sql = "INSERT INTO article (title, content, published_at)
+            VALUES ('" . mysqli_escape_string($conn, $_POST['title']) ."','"
+                        . mysqli_escape_string($conn, $_POST['content']) ."','"
+                        . mysqli_escape_string($conn, $_POST['published_at']) ."')";
