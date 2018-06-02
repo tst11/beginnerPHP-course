@@ -68,10 +68,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                 } else {
                     $protocol = 'http';
                 }
-                //echo "Location: $protocol://" . $_SERVER['HTTP_HOST'] . "/12_functions/article.php?id=$id";
-                header("Location: $protocol://" . $_SERVER['HTTP_HOST'] . "/beginner_PHP_udemy/beginnerPHP-course/12_functions/article.php?id=$id");
-                //exit;
-                //echo "Inserted record with ID: $id";
+
+                $directory = str_replace($_SERVER['DOCUMENT_ROOT'], '', getcwd());
+                
+                header("Location: $protocol://" . $_SERVER['HTTP_HOST'] . "$directory/article.php?id=$id");
+                
             } else {
                 echo mysqli_stmt_error($stmt);
             }
@@ -88,30 +89,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <h2>New article</h2>
 
-<?php if (! empty($errors)): ?>
-    <?php foreach($errors as $error): ?>
-        <p><?= $error; ?></p>
-    <?php endforeach; ?>
-<?php endif; ?>
-
-<form method="post">
-    <div>
-        <label for="title">Title</label>
-        <input name="title" id="title" type="text" placeholder="Article title" value="<?= htmlspecialchars($title); ?>">
-    </div>
-
-    <div>
-        <label for="content">Content</label>
-        <textarea value="<?= htmlspecialchars($content); ?>" name="content" id="content" type="text" placeholder="Article content"></textarea>
-    </div>
-
-    <div>
-        <label for="published_at">Publication date and time</label>
-        <input id="published_at" value="<?= htmlspecialchars($published_at); ?>" name="published_at" type="datetime-local">
-    </div>
-
-    <button>Add</button>
-    
-</form>
+<?php require 'includes/article-form.php' ?>
 
 <?php require 'includes/footer.php'; ?>

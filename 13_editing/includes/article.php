@@ -29,8 +29,8 @@ function getArticle($conn, $id)
     if (mysqli_stmt_execute($stmt)) {
 
       $result = mysqli_stmt_get_result($stmt);
-
-      return mysqli_fetch_array($result, MYSQLI_ASSOC);
+      //echo $result;
+      var_dump(mysqli_fetch_array($result, MYSQLI_ASSOC));
 
     }
   }
