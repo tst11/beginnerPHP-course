@@ -12,7 +12,7 @@
 
     <div>
         <label for="content">Content</label>
-        <textarea value="<?= htmlspecialchars($content); ?>" name="content" id="content" type="text" placeholder="Article content"></textarea>
+        <textarea name="content" id="content" placeholder="Article contenta"><?= htmlspecialchars($content); ?></textarea>
     </div>
 
     <div>

@@ -21,3 +21,24 @@ $sql = "INSERT INTO article (title, content, published_at)
             VALUES ('" . mysqli_escape_string($conn, $_POST['title']) ."','"
                         . mysqli_escape_string($conn, $_POST['content']) ."','"
                         . mysqli_escape_string($conn, $_POST['published_at']) ."')";
+
+
+UPDATE table_name
+SET colum1 = value1,
+    column2 = value2
+WHERE condition;
+
+(WHERE is important, because without it, it will update all rows with col)
+
+UPDATE article
+SET title = 'Updated title'
+WHERE id = 6
+
+DELETE FROM table_name
+WHERE condition;
+
+DELETE FROM article
+WHERE id = 8
+
+(any clause with where statement, need index)
+(if no WHERE, every row will be deleted)

@@ -1,8 +1,9 @@
 <?php 
 
 require 'includes/database.php';
+require 'includes/article.php';
+require 'includes/url.php';
 
-$errors = [];
 $title = '';
 $content = '';
 $published_at = '';
@@ -13,30 +14,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     $content = $_POST['content'];
     $published_at = $_POST['published_at'];
 
-    if ($title == '') {
-        $errors[] = 'Title is required';
-        //die('Title is required');
-    }
-
-    if ($content == '') {
-        $errors[] = 'Content is required';
-        //die('Title is required');
-    }
-
-    if ($published_at != '') {
-        $date_time = date_create_from_format('Y-m-d H:i:s', $published_at);
-
-        if($date_time === false) {
-            $errors[] = "Invalid date and time: $published_at";
-        } else {
-            $date_errors = date_get_last_errors();
-
-            if ($date_errors['warning_count'] > 0) {
-                $errors[] = 'Invalid date and time';
-            }
-            //echo date_format($date_time, 'Y-m-d H:i:s'); exit;
-        }
-    }
+    $errors = validateArticle($title, $content, $published_at);
 
     //var_dump($errors); exit;
 
@@ -63,15 +41,15 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             if(mysqli_stmt_execute($stmt)) {
                 $id = mysqli_insert_id($conn);
 
-                if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
-                    $protocol = 'https';
-                } else {
-                    $protocol = 'http';
-                }
+                // if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
+                //     $protocol = 'https';
+                // } else {
+                //     $protocol = 'http';
+                // }
 
                 $directory = str_replace($_SERVER['DOCUMENT_ROOT'], '', getcwd());
-                
-                header("Location: $protocol://" . $_SERVER['HTTP_HOST'] . "$directory/article.php?id=$id");
+                redirect("$directory/article.php?id=$id");
+                //header("Location: $protocol://" . $_SERVER['HTTP_HOST'] . "$directory/article.php?id=$id");
                 
             } else {
                 echo mysqli_stmt_error($stmt);
