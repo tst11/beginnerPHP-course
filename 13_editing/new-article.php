@@ -47,7 +47,18 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                 //     $protocol = 'http';
                 // }
 
-                $directory = str_replace($_SERVER['DOCUMENT_ROOT'], '', getcwd());
+                $workingDirectory = '';
+                
+                if (strpos(getcwd(), '\\')) {
+            
+                    $workingDirectory = str_replace('\\', '/', getcwd());
+
+                } else {
+                    $workingDirectory = getcwd();
+                }
+
+                $directory = str_replace($_SERVER['DOCUMENT_ROOT'], '', $workingDirectory);
+
                 redirect("$directory/article.php?id=$id");
                 //header("Location: $protocol://" . $_SERVER['HTTP_HOST'] . "$directory/article.php?id=$id");
                 

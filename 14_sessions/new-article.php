@@ -3,28 +3,17 @@
 require 'includes/database.php';
 require 'includes/article.php';
 require 'includes/url.php';
+require 'includes/auth.php';
 
-$conn = getDB();
-//echo "Connected successfully.";
-if (isset($_GET['id'])) {
-    
-    $article = getArticle($conn, $_GET['id']);
+session_start();
 
-    if ($article) {
-
-        $id = $article['id'];
-        $title = $article['title'];
-        $content = $article['content'];
-        $published_at = $article['published_at'];
-    } else {
-        die("article not found");
-    }
-
-
-} else {
-    //$article = null;
-    die("id not supplied, article not found");
+if (! isLoggedIn()) {
+    die("unauthorised");
 }
+
+$title = '';
+$content = '';
+$published_at = '';
 
 if($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -37,14 +26,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     //var_dump($errors); exit;
 
     if(empty($errors)) {
-        
-        //$conn = getDB();
+        $conn = getDB();
 
-        $sql = "UPDATE article 
-                SET title = ?,
-                    content = ?, 
-                    published_at = ?
-                WHERE id = ?";
+        $sql = "INSERT INTO article (title, content, published_at)
+                VALUES (?,?,?)";
 
         //var_dump($sql); exit;;
         $stmt = mysqli_prepare($conn, $sql);
@@ -58,14 +43,21 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             //$article = mysqli_fetch_assoc($results);
-            mysqli_stmt_bind_param($stmt, "sssi", $title, $content, $published_at, $id);
+            mysqli_stmt_bind_param($stmt, "sss", $title, $content, $published_at);
             
             if(mysqli_stmt_execute($stmt)) {
-                
-                $workingDirectory = '';
+                $id = mysqli_insert_id($conn);
 
+                // if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
+                //     $protocol = 'https';
+                // } else {
+                //     $protocol = 'http';
+                // }
+
+                $workingDirectory = '';
+                
                 if (strpos(getcwd(), '\\')) {
-          
+            
                     $workingDirectory = str_replace('\\', '/', getcwd());
 
                 } else {
@@ -73,8 +65,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
 
                 $directory = str_replace($_SERVER['DOCUMENT_ROOT'], '', $workingDirectory);
-                // echo '<br>Directory<br>';
-                // echo $directory;
+
                 redirect("$directory/article.php?id=$id");
                 //header("Location: $protocol://" . $_SERVER['HTTP_HOST'] . "$directory/article.php?id=$id");
                 
@@ -84,14 +75,15 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             
             
         }
-
     }
+    
 }
+
 ?>
 
 <?php require 'includes/header.php'; ?>
 
-<h2>Edit article</h2>
+<h2>New article</h2>
 
 <?php require 'includes/article-form.php' ?>
 
